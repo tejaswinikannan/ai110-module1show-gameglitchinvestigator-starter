@@ -1,6 +1,5 @@
 from logic_utils import check_guess, get_range_for_difficulty
 
-
 # --- Existing tests (fixed: check_guess returns a tuple, not a plain string) ---
 
 def test_winning_guess():

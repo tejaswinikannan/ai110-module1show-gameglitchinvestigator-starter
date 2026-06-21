@@ -25,19 +25,34 @@ It wrote the code, ran away, and now the game is unplayable.
 
 ## 📝 Document Your Experience
 
-- [ ] Describe the game's purpose.
-- [ ] Detail which bugs you found.
-- [ ] Explain what fixes you applied.
+**Game purpose:** A number guessing game where the player picks a difficulty (Easy / Normal / Hard), then tries to guess a secret number within a limited number of attempts based on the difficulty. Each guess returns a hint and updates a score, and the game ends when the player guesses correctly or runs out of attempts.
+
+**Bugs found:**
+
+1. **Hints were reversed** — when the guess was too high the game said "Go HIGHER!", and when too low it said "Go LOWER!". The comparison branches in `check_guess` had their return values swapped.
+2. **Cast to string on even attempts** — on every other submission the secret was converted to a string before being passed to `check_guess`, causing alphabetical comparison instead of numeric, producing wrong hints.
+3. **New game did not fully reset session state** — clicking "New Game" only reset `attempts` and `secret`, leaving `score`, `status`, and `history` carrying over from the previous round. The new secret also always used a hardcoded range of 1–100 instead of the selected difficulty range.
+4. **Difficulty ranges for Normal and Hard were swapped** — Normal returned 1–100 and Hard returned 1–50, making Hard easier than Normal.
+5. **"Attempts left" counter was off by one** — the display was rendered before `attempts` was incremented in the submit block, so on the final guess the screen simultaneously showed "Attempts left: 1" and "Out of attempts!".
+
+**Fixes applied:**
+
+- Swapped the return values in `check_guess` to correctly return  "Go LOWER!" or "Go HIGHER!".
+- Removed the alternating string-cast of the secret so `check_guess` always receives two integers.
+- Extended the new-game reset block to also clear `score`, `status`, and `history`, and made it use the difficulty-aware range.
+- Corrected `get_range_for_difficulty` so Normal → `(1, 50)` and Hard → `(1, 100)`.
+- Changed `attempts` to start at `0`, moved the increment before the `st.info()` display line so the counter always reflects the current attempt when rendered.
+- Moved utility functions from `app.py` into `logic_utils.py` and imported them, keeping UI and logic separate.
 
 ## 📸 Demo Walkthrough
 
 Describe your fixed game in numbered steps so a reader can follow along without watching a video:
 
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
+1. User opens the app and sees "Attempts left: 8" on Normal difficulty
+2. User enters a guess of 20 → game returns "Go HIGHER!"
+3. User enters a guess of 70 → game returns "Go LOWER!"
+4. Score updates correctly after each guess and attempts left decrements by 1
+5. User enters the correct guess → game shows " Correct!" and ends with a final score
 
 **Screenshot** *(optional)*: <!-- Insert a screenshot of your fixed, winning game here -->
 
